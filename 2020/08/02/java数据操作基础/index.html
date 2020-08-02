@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="迁移自原博客 时间 2019.12.31   今天说一下关于java基础的东西。昨天顺手写了一个多线程操作例子，运行了一下居然发现运行没错。非常超出我的预料，因为这种操作几乎一定会出现错误。猜测为什么会没有出错的原因，可能是因为传参方式的问题。 1. java的传参方式博主最先学习的是c系列，然后学的才是java。c系列是既有值传递又有引用传递。 而对java传参方式已经有些模糊。 说一下结论，j">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2020/08/02/java%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="迁移自原博客 时间 2019.12.31   今天说一下关于java基础的东西。昨天顺手写了一个多线程操作例子，运行了一下居然发现运行没错。非常超出我的预料，因为这种操作几乎一定会出现错误。猜测为什么会没有出错的原因，可能是因为传参方式的问题。 1. java的传参方式博主最先学习的是c系列，然后学的才是java。c系列是既有值传递又有引用传递。 而对java传参方式已经有些模糊。 说一下结论，j">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.hacpai.com/bing/20190515.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+<meta property="article:published_time" content="2020-08-02T13:57:16.294Z">
+<meta property="article:modified_time" content="2020-08-02T13:57:55.870Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.hacpai.com/bing/20190515.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-java数据操作基础" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/08/02/java%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time datetime="2020-08-02T13:57:16.294Z" itemprop="datePublished">2020-08-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em>迁移自原博客 时间 2019.12.31</em></p>
+<p><img src="https://img.hacpai.com/bing/20190515.jpg?imageView2/1/w/960/h/540/interlace/1/q/100"> </p>
+<p><em>今天说一下关于java基础的东西。昨天顺手写了一个<a target="_blank" rel="noopener" href="https://github.com/codeAndxv/blog-test/blob/master/src/main/java/com/dudu/mutil/unsafe/Test.java">多线程操作例子</a>，运行了一下居然发现运行没错。非常超出我的预料，因为这种操作几乎一定会出现错误。猜测为什么会没有出错的原因，可能是因为传参方式的问题。</em></p>
+<h3 id="1-java的传参方式"><a href="#1-java的传参方式" class="headerlink" title="1. java的传参方式"></a>1. java的传参方式</h3><p>博主最先学习的是c系列，然后学的才是java。c系列是既有值传递又有引用传递。 而对java传参方式已经有些模糊。</p>
+<p>说一下结论，java中只有值传递，传递的只有值的副本。</p>
+<p>写<a target="_blank" rel="noopener" href="https://github.com/codeAndxv/blog-test/tree/master/src/main/java/com/dudu/func">三个方法调用的例子</a>，观察这三个例子的这三个例子的结果分别是20 10； 20 10； 以及20 20。 先思考一下为什么？</p>
+<p>为了更好的理解，分析一下jvm。<br><strong>jvm的内存分为虚拟机栈，本地方法栈，程序计数器，方法区以及堆。</strong></p>
+<p>更详细的解释：<a target="_blank" rel="noopener" href="https://juejin.im/post/5bce68226fb9a05ce46a0476">这一次，彻底解决Java的值传递和引用传递</a></p>
+<p>这篇文章大部分内容我都很认可，但感觉引入了没必要的形参和实参反而导致了理解上的障碍。 参数传递，传递的其实是值的备份。参数分为基本数据类型和引用类型，基本数据类型被存放在虚拟机栈。对基本数据类型的赋值其实是对参数的副本的赋值，不会对基本数据类型有影响。引用类型所引用的对象存在于堆中。一个进程中的所有的线程共享同一个堆，所以只要引用地址相同，同一个进程中的引用对象是唯一的。如果对引用地址的副本进行了修改，只是把副本指向了一个新的对象，而不会对原引用有影响。</p>
+<p><strong>第二个例子结果分析</strong></p>
+<p><strong>Integer;Float这种基本类型的引用类型又不同于我们自定义的引用类型。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public static void func(Integer a) &#123;</span><br><span class="line">    a &#x3D; 2000;                                 &#x2F;&#x2F;  &lt;3 &gt;</span><br><span class="line">    System.out.println(a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    Integer a &#x3D; Integer.valueOf(1000);       &#x2F;&#x2F;   &lt;1&gt;     </span><br><span class="line">    func(a);                                &#x2F;&#x2F;  &lt;2 &gt;</span><br><span class="line">    System.out.println(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在&lt;3&gt;，func接收到的参数是值为1000的引用地址，将该参数修改成值为2000。<code>a</code>变成了基本数据类型。原<code>a</code>没有被修改。</p>
+<p>那么将第三步修改成</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = Integer.valueOf(<span class="number">2000</span>);            &lt;<span class="number">3</span>&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以修改<code>a</code>的值吗？ 在&lt;3&gt;步，a被修改成值为2000的引用地址。原<code>a</code>仍然没有被修改。</p>
+<p>我们需要一个不修改引用地址，而是修改引用地址引用的值的方法。</p>
+<p>进入到Integer源码看一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**    </span></span><br><span class="line"><span class="comment"> * The value of the &#123;<span class="doctag">@code</span> Integer&#125;.  </span></span><br><span class="line"><span class="comment"> *     * <span class="doctag">@serial</span>   </span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> value;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>发现value被设置成了final，也就意味着我们不能修改一个已经存在的Integer对象的值。</p>
+<h6 id="题外话"><a href="#题外话" class="headerlink" title="题外话"></a>题外话</h6><p>Integer保存一些常用的Integer缓存。这些Integer范围默认是从-128到127。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Integer a = Integer.valueOf(<span class="number">1</span>);</span><br><span class="line">Integer b = Integer.valueOf(<span class="number">1</span>);</span><br><span class="line">System.out.println(a == b);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以及</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Integer a = Integer.valueOf(<span class="number">200</span>);</span><br><span class="line">Integer b = Integer.valueOf(<span class="number">200</span>);</span><br><span class="line">System.out.println(a == b);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>结果是不同的。</p>
+<h3 id="2-字符串常量池"><a href="#2-字符串常量池" class="headerlink" title="2. 字符串常量池"></a>2. 字符串常量池</h3><p>java设计者为了提供性能，为常用的字符串对象设计了字符串常量池。</p>
+<h5 id="字符串常量池位置"><a href="#字符串常量池位置" class="headerlink" title="字符串常量池位置"></a>字符串常量池位置</h5><p>根据前文描述， 内存中的堆、虚拟机栈、程数计数器、本地方法栈、方法区。字符串常量池的目的就是减少字符串对象的创建和内存占用。</p>
+<p>根据这个逻辑，它应该存在于线程共享区，也就是堆或者方法区中。堆存放的是对象，每个对象都包含一个与之对应的class。字符串常量池存在于方法区中。</p>
+<p><strong><a target="_blank" rel="noopener" href="https://github.com/codeAndxv/blog-test/tree/master/src/main/java/com/dudu/constant">例子</a></strong></p>
+<h3 id="3-真正的原因"><a href="#3-真正的原因" class="headerlink" title="3. 真正的原因"></a>3. 真正的原因</h3><p>回归正题，在学习了上面两部分知识后，还是没有找到<a target="_blank" rel="noopener" href="https://github.com/codeAndxv/blog-test/blob/master/src/main/java/com/dudu/mutil/unsafe/Test.java">多线程操作例子</a>没有出错原因。</p>
+<p>那么换一个运行<code>threa</code>的方法，将例子修改成<a target="_blank" rel="noopener" href="https://github.com/codeAndxv/blog-test/blob/master/src/main/java/com/dudu/mutil/unsafe/CorrectTest.java">CorrectTest</a>，运行，结果不再是<code>0</code>。</p>
+<p>思考这两个例子有什么区别呢， 在回顾第一个例子，其实它只是单线程运行的。</p>
+<h3 id="4-结论"><a href="#4-结论" class="headerlink" title="4. 结论"></a>4. 结论</h3><p>有段时间没有回顾java基础知识了，犯了很低级的错误。 学习，温故而知新。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/08/02/java%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C%E5%9F%BA%E7%A1%80/" data-id="ckdd5qtio0003gstd8h4c9hyf" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/02/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%95%B0%E6%8D%AE%E4%B8%8A%E9%93%BE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/02/%E5%85%B3%E4%BA%8E%E6%8A%80%E6%9C%AF%E5%BC%80%E5%8F%91%E9%81%93%E8%B7%AF%E7%9A%84%E6%80%9D%E8%80%83/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/08/02/%E3%80%8A%E5%A5%87%E5%BC%82%E4%BA%BA%E7%94%9F%E3%80%8B%E6%9C%89%E6%84%9F/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/%E7%9B%AE%E5%89%8D%E7%9A%84%E5%8F%8D%E6%80%9D%E5%92%8C%E6%9C%AA%E6%9D%A5%E7%9A%84%E8%AE%A1%E5%88%92/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/spring%20cloud%20gateway%20%E4%BD%BF%E7%94%A8%20nacos%E4%BD%9C%E4%B8%BA%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/%E9%98%85%E8%AF%BB%E3%80%8A%E7%B2%BE%E9%80%9A%E6%AF%94%E7%89%B9%E5%B8%81%E3%80%8B%E7%9A%84%E8%8B%A5%E5%B9%B2%E7%BA%AA%E5%BD%95/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/2020%E5%B9%B4%E5%B9%B4%E5%88%9D%E9%9A%8F%E6%83%B3%20%E5%85%B3%E4%BA%8E%E7%9B%AE%E5%89%8D%E8%87%AA%E8%BA%AB%E7%8A%B6%E6%80%81%E5%92%8C%E4%BB%A5%E5%90%8E%E7%9A%84%E5%8F%91%E5%B1%95%E7%9A%84%E8%8B%A5%E5%B9%B2%E6%83%B3%E6%B3%95/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

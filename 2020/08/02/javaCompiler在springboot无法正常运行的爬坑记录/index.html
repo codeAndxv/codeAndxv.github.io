@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="迁移自原博客 时间 2019.12.08 本篇文章介绍在springboot中，使用javaCompiler时，遇到的坑。因为springboot使用的特殊的jar包格式，导致java文件编译以及class文件加载方面的问题。   稍微碎碎念一下，这个问题困扰了我三天。这个问题里面有两个坑，下面慢慢解释 背景abc项目因为某些原因，需要用到动态编译以及动态加载, 所以使用javaCompiler。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2020/08/02/javaCompiler%E5%9C%A8springboot%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E8%BF%90%E8%A1%8C%E7%9A%84%E7%88%AC%E5%9D%91%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="迁移自原博客 时间 2019.12.08 本篇文章介绍在springboot中，使用javaCompiler时，遇到的坑。因为springboot使用的特殊的jar包格式，导致java文件编译以及class文件加载方面的问题。   稍微碎碎念一下，这个问题困扰了我三天。这个问题里面有两个坑，下面慢慢解释 背景abc项目因为某些原因，需要用到动态编译以及动态加载, 所以使用javaCompiler。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.hacpai.com/bing/20190322.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+<meta property="article:published_time" content="2020-08-02T13:55:02.409Z">
+<meta property="article:modified_time" content="2020-08-02T13:55:46.593Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.hacpai.com/bing/20190322.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-javaCompiler在springboot无法正常运行的爬坑记录" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/08/02/javaCompiler%E5%9C%A8springboot%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E8%BF%90%E8%A1%8C%E7%9A%84%E7%88%AC%E5%9D%91%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time datetime="2020-08-02T13:55:02.409Z" itemprop="datePublished">2020-08-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em>迁移自原博客 时间 2019.12.08</em></p>
+<p>本篇文章介绍在springboot中，使用javaCompiler时，遇到的坑。因为springboot使用的特殊的jar包格式，导致java文件编译以及class文件加载方面的问题。</p>
+<p><img src="https://img.hacpai.com/bing/20190322.jpg?imageView2/1/w/960/h/540/interlace/1/q/100"> </p>
+<p><em>稍微碎碎念一下，这个问题困扰了我三天。这个问题里面有两个坑，下面慢慢解释</em></p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p><em>abc项目因为某些原因，需要用到动态编译以及动态加载<br>, 所以使用javaCompiler。将java文件动态编译成class文件，然后需要用到class时来动态加载class文件。在windows idea上以main方法运行没问题。</em></p>
+<p>javaCompiler相关知识</p>
+<h3 id="package-doesnot-exist-cannot-find-symbol-when-compile-java-file"><a href="#package-doesnot-exist-cannot-find-symbol-when-compile-java-file" class="headerlink" title="package doesnot exist cannot find symbol when compile java file"></a>package doesnot exist cannot find symbol when compile java file</h3><p>abc项目在本机运行的很好，应docker趋势，开始构建docker镜像。</p>
+<p>写dockerfile文件, 最后一行<code>java -jar projectname.jar</code>&gt;&gt;run docker build in linux。</p>
+<p>然后不出意外的报错了。查看日志发现是运行到<code>javac.run()</code>方法时，报<code>package ** doesnot exist</code>。</p>
+<p>找一下<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html">官方文档javac Options</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-cp *path* or -classpath *path*</span><br><span class="line"></span><br><span class="line">    Specifies where to find user class files, and (optionally) annotation processors and source files. This class path overrides the user class path in the &#96;CLASSPATH&#96; environment variable. If neither &#96;CLASSPATH&#96;, &#96;-cp&#96; nor &#96;-classpath&#96; is specified, then the user *class path* is the current directory. See [Setting the Class Path](https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;technotes&#x2F;tools&#x2F;windows&#x2F;classpath.html#CBHHCGFB).</span><br><span class="line">    </span><br><span class="line">    If the &#96;-sourcepath&#96; option is not specified, then the user class path is also searched for source files.</span><br><span class="line">    </span><br><span class="line">    If the &#96;-processorpath&#96; option is not specified, then the class path is also searched for annotation processors.</span><br></pre></td></tr></table></figure>
+<p>然后就很简单了，我们把用到的包路径作为<code>-classpath</code>的参数。</p>
+<p>还有一点小问题， 我们如何找到用到的包依赖路径。我用了一个比较hack的方法，通过<code>mvn dependency:copy-dependencies</code>把依赖复制到<code>target/dependency</code>这个路径下。通过<code>getLibsPathFromDicPath</code>方法获取到所有依赖包的路径并组合在一起。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private static String getLibsPathFromDicPath(String dicPath) &#123;</span><br><span class="line">      String libSeparator &#x3D; OSValidator.isWindows() ? &quot;;&quot; : &quot;:&quot;;</span><br><span class="line">      File file &#x3D; new File(dicPath);</span><br><span class="line">      StringBuilder stringBuilder &#x3D; new StringBuilder();</span><br><span class="line">      for (File temFile : Objects.requireNonNull(file.listFiles())) &#123;</span><br><span class="line">          stringBuilder.append(temFile.getAbsoluteFile());</span><br><span class="line">          stringBuilder.append(libSeparator);</span><br><span class="line">      &#125;</span><br><span class="line">      stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(libSeparator));</span><br><span class="line">      return stringBuilder.toString();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>我不确定使用<code>ENV CLASSPATH projectDir/target/dependency/</code>这个方法是否可以。我尝试了一下，失败了。不知道是因为这个方法不行还是因为其他什么原因。</p>
+<p>问题虽然解决了，但思考为什么在idea运行没有出现这个问题？ 推测应该是idea自动为project设置了classPath以及复制依赖到classPath路径下。</p>
+<h5 id="classNotFoundException-when-loadClass"><a href="#classNotFoundException-when-loadClass" class="headerlink" title="classNotFoundException when loadClass"></a>classNotFoundException when loadClass</h5><p>一切都不是一帆风顺的， 当解决完上面的问题，再次尝试，再次出错。 查看日志，发现是在动态加载class文件时报错。思考这些报classNotFoundException的类其实已经被加载了，无论是以jar方式还是以main方式。</p>
+<p>但是为什么找不到呢？ 敲敲脑壳，开始搜索classLoader相关知识。</p>
+<p>一顿狼吞虎咽的classLoader恶补后，知道了可能导致问题出现的原因。</p>
+<ul>
+<li>classLoader加载是parent delegate model，parent classLoader first!</li>
+<li>父classLoader看不到子classLoader加载的类</li>
+<li>springboot使用了自定义的classLoader:LaunchedURLClassLoader， 其父classLoader是AppClassLoader<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; ClassLoader Tree&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">org.springframework.boot.loader.LaunchedURLClassLoader@1218025c</span><br><span class="line">- sun.misc.Launcher$AppClassLoader@6bc7c054</span><br><span class="line">-- sun.misc.Launcher$ExtClassLoader@85ede7b</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>在找一下项目中用到的<code>classLoader</code>，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">URLClassLoader classLoader &#x3D; new URLClassLoader(urls);</span><br></pre></td></tr></table></figure>
+<p>那么就小小的修改一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">URLClassLoader classLoader &#x3D; new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());</span><br></pre></td></tr></table></figure>
+<p><code>Thread.currentThread().getContextClassLoader()</code>在jar方式下运行时，值是<code>LaunchedURLClassLoader</code>。</p>
+<p>再次构建尝试，一切正常。完美。</p>
+<h4 id="附言"><a href="#附言" class="headerlink" title="附言"></a>附言</h4><p>除了通过拷贝依赖到某个路径下，还可以通过自定义JavaFileManager。具体原理是其实在jar方式下，所有的依赖包已经被打包进projectname.jar里面了。</p>
+<p>下面简述一下<code>springboot</code>的<code>fat jar</code>。</p>
+<p><code>fat jar</code>里面包括了项目的class文件、embed-tomcat、所有的依赖包以及一个可执行脚本。可以直接执行<code>java -jar name.jar</code>来执行。</p>
+<p>看一下依赖包的路径:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; Spring Boot Application ClassLoader Urls &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;  </span><br><span class="line">ClassLoader urls: org.springframework.boot.loader.LaunchedURLClassLoader@4aa298b7  </span><br><span class="line">file:&#x2F;Users&#x2F;hengyunabc&#x2F;code&#x2F;java&#x2F;spring-boot-inside&#x2F;demo-classloader-context&#x2F;target&#x2F;demo&#x2F;BOOT-INF&#x2F;classes&#x2F;  </span><br><span class="line">jar:file:&#x2F;Users&#x2F;hengyunabc&#x2F;code&#x2F;java&#x2F;spring-boot-inside&#x2F;demo-classloader-context&#x2F;target&#x2F;demo&#x2F;BOOT-INF&#x2F;lib&#x2F;bcpkix-jdk15on-1.55.jar!&#x2F;  </span><br><span class="line">jar:file:&#x2F;Users&#x2F;hengyunabc&#x2F;code&#x2F;java&#x2F;spring-boot-inside&#x2F;demo-classloader-context&#x2F;target&#x2F;demo&#x2F;BOOT-INF&#x2F;lib&#x2F;bcprov-jdk15on-1.55.jar!&#x2F;  </span><br><span class="line">jar:file:&#x2F;Users&#x2F;hengyunabc&#x2F;code&#x2F;java&#x2F;spring-boot-inside&#x2F;demo-classloader-context&#x2F;target&#x2F;demo&#x2F;BOOT-INF&#x2F;lib&#x2F;classmate-1.3.3.jar!&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们自定义一个javaFileManager来查找到想要的依赖包，就不再需要单独复制依赖包到一个路径。想要实现的可以看一下<a target="_blank" rel="noopener" href="http://atamur.blogspot.com/2009/10/using-built-in-javacompiler-with-custom.html">Using built-in JavaCompiler with a custom classloader</a>。博主尝试了一下，没有成功，因为时间问题没再继续尝试。</p>
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>在解决这个问题的整个过程中，我也犯了很多错误。 package doesnot exist 这个错误，我以为是和classLoader这方面有关系。javac.run和javaCompiler.getTask来回的切换尝试等等错误。 本质上还是原理上的不清楚，导致只能不断的尝试。</p>
+<p>相关资料链接：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/michaelliao/compiler/issues/5">springboot应用打包后, JavaCompiler无法动态加载类</a></p>
+<p><a target="_blank" rel="noopener" href="http://atamur.blogspot.com/2009/10/using-built-in-javacompiler-with-custom.html">Using built-in JavaCompiler with a custom classloader</a></p>
+<h5 id="the-links-about-javac"><a href="#the-links-about-javac" class="headerlink" title="the links about javac"></a>the links about javac</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/pengpenglin/article/details/1682858">Java中-classpath和路径的使用</a><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2096283/including-jars-in-classpath-on-commandline-javac-or-apt">Including jars in classpath on commandline (javac or apt)</a></p>
+<h5 id="the-links-about-javaCompiler"><a href="#the-links-about-javaCompiler" class="headerlink" title="the links about javaCompiler:"></a>the links about javaCompiler:</h5><p><a target="_blank" rel="noopener" href="http://pfmiles.github.io/blog/dynamic-java/">动态的Java - 无废话JavaCompilerAPI中文指南</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/ooppookid/article/details/51710981">Java千百问_08JDK详解（008）_通过代码如何编译java文件</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.programcreek.com/java-api-examples/?class=javax.tools.JavaCompiler&method=getTask">Java Code Examples for javax.tools.JavaCompiler.<em>getTask()</em></a></p>
+<p><a target="_blank" rel="noopener" href="https://dzone.com/articles/how-to-compile-a-class-at-runtime-with-java-8-and">How to Compile a Class at Runtime with Java 8 and 9</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1563909/how-to-set-classpath-when-i-use-javax-tools-javacompiler-compile-the-source">How to set classpath when I use javax.tools.JavaCompiler compile the source?</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/andysd/p/10083760.html">java动态编译 （java在线执行代码后端实现原理）（二）</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/andysd/p/10081443.html">java动态编译 （java在线执行代码后端实现原理）</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.leanote.com/post/medusar/java-Compiler-API">使用java Compiler API编译java文件</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.leanote.com/post/medusar/30d1a37b6154">使用Java Compiler API编译字符串java源码</a></p>
+<h5 id="the-links-about-classLoader"><a href="#the-links-about-classLoader" class="headerlink" title="the links about classLoader:"></a>the links about classLoader:</h5><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000013469223">深入理解JVM之ClassLoader</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000013532009">springboot应用启动原理(二) 扩展URLClassLoader实现嵌套jar加载</a></p>
+<p><a target="_blank" rel="noopener" href="http://hengyunabc.github.io/spring-boot-classloader/">深入Spring Boot：ClassLoader的继承关系和影响</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/caoyi1207/article/details/80606232">Spring Boot ClassLoader</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31218636">委派模型与类加载器</a></p>
+<h5 id="the-links-about-springboot"><a href="#the-links-about-springboot" class="headerlink" title="the links about springboot"></a>the links about springboot</h5><p><a target="_blank" rel="noopener" href="http://hengyunabc.github.io/spring-boot-application-start-analysis/">spring boot应用启动原理分析</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/39716796/spring-boot-executable-jar-with-classpath">Spring Boot Executable Jar with Classpath</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000017748493">运行 Spring Boot 应用的 3 种方式</a></p>
+<h5 id="stack-overflow"><a href="#stack-overflow" class="headerlink" title="stack overflow"></a>stack overflow</h5><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/52601788/javacompiler-works-when-running-the-main-method-directly-but-not-when-running-sp">JavaCompiler works when running the main method directly but not when running spring-boot:run</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46896593/using-javacompiler-api-in-a-spring-boot-app-unable-to-properly-set-the-compila">Using JavaCompiler API in a Spring Boot app - unable to properly set the compilation classpath</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/33573365/why-does-javac-says-package-pkg-name-does-not-exist">Why does JAVAC says, Package <pkg_name> does not exist?</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/12718723/javac-error-package-x-does-not-exist-at-import-x">javac error: “package x does not exist” at “import x”</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10767048/javacompiler-with-custom-classloader-and-filemanager">JavaCompiler with custom ClassLoader and FileManager</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/08/02/javaCompiler%E5%9C%A8springboot%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E8%BF%90%E8%A1%8C%E7%9A%84%E7%88%AC%E5%9D%91%E8%AE%B0%E5%BD%95/" data-id="ckdd5qtin0002gstdekeibr0r" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/02/%E5%85%B3%E4%BA%8E%E6%8A%80%E6%9C%AF%E5%BC%80%E5%8F%91%E9%81%93%E8%B7%AF%E7%9A%84%E6%80%9D%E8%80%83/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/02/api%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/08/02/%E3%80%8A%E5%A5%87%E5%BC%82%E4%BA%BA%E7%94%9F%E3%80%8B%E6%9C%89%E6%84%9F/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/%E7%9B%AE%E5%89%8D%E7%9A%84%E5%8F%8D%E6%80%9D%E5%92%8C%E6%9C%AA%E6%9D%A5%E7%9A%84%E8%AE%A1%E5%88%92/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/spring%20cloud%20gateway%20%E4%BD%BF%E7%94%A8%20nacos%E4%BD%9C%E4%B8%BA%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/%E9%98%85%E8%AF%BB%E3%80%8A%E7%B2%BE%E9%80%9A%E6%AF%94%E7%89%B9%E5%B8%81%E3%80%8B%E7%9A%84%E8%8B%A5%E5%B9%B2%E7%BA%AA%E5%BD%95/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/08/02/2020%E5%B9%B4%E5%B9%B4%E5%88%9D%E9%9A%8F%E6%83%B3%20%E5%85%B3%E4%BA%8E%E7%9B%AE%E5%89%8D%E8%87%AA%E8%BA%AB%E7%8A%B6%E6%80%81%E5%92%8C%E4%BB%A5%E5%90%8E%E7%9A%84%E5%8F%91%E5%B1%95%E7%9A%84%E8%8B%A5%E5%B9%B2%E6%83%B3%E6%B3%95/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
